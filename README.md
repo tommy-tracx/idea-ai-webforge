@@ -68,6 +68,17 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
+## Environment variables
+
+Create a `.env` file based on `.env.example` and provide your OpenAI API key:
+
+```sh
+cp .env.example .env
+echo "VITE_OPENAI_API_KEY=your-openai-key" >> .env
+```
+
+The application reads `VITE_OPENAI_API_KEY` at runtime for connecting to OpenAI.
+
 ## How can I deploy this project?
 
 Simply open [Lovable](https://lovable.dev/projects/ce75a6c3-2292-4fb9-842d-f505cfb6d646) and click on Share -> Publish.

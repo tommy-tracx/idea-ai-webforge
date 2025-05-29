@@ -12,7 +12,7 @@ export const aiServices: AIService[] = [
     name: 'OpenAI GPT',
     type: 'openai',
     endpoint: 'https://api.openai.com/v1/chat/completions',
-    apiKey: 'demo-key', // Using demo key since the provided key is archived
+    apiKey: import.meta.env.VITE_OPENAI_API_KEY || '',
     model: 'gpt-4o-mini'
   },
   {
@@ -60,20 +60,11 @@ export async function callAIService(
     throw new Error(`AI service ${serviceType} not found`);
   }
 
-  // For demo purposes, return fallback responses for OpenAI since the key is archived
-  if (service.type === 'openai') {
-    console.log('Using fallback response for OpenAI service (archived key)');
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(getRandomFallbackResponse());
-      }, 1000); // Simulate API delay
-    });
-  }
-
-  // Handle non-OpenAI services
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    'api-key': service.apiKey
+    ...(service.type === 'openai'
+      ? { Authorization: `Bearer ${service.apiKey}` }
+      : { 'api-key': service.apiKey })
   };
 
   const requestBody = {
