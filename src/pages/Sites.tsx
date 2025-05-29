@@ -1,11 +1,13 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Globe, Settings, Plus, ExternalLink, Copy, Trash2, Edit } from "lucide-react";
 import { toast } from "sonner";
+import { getSites, deleteSite } from "../services/api";
+import { Site } from "../types/app";
 
 interface Site {
   id: string;
@@ -19,46 +21,11 @@ interface Site {
 }
 
 const Sites = () => {
-  const [sites, setSites] = useState<Site[]>([
-    {
-      id: "1",
-      name: "E-commerce Store",
-      domain: "store-abc123.pipeline.app",
-      customDomain: "mystore.com",
-      status: "active",
-      lastDeployed: "2 hours ago",
-      visitors: 2543,
-      size: "12.4 MB"
-    },
-    {
-      id: "2",
-      name: "Portfolio Website",
-      domain: "portfolio-def456.pipeline.app",
-      status: "building",
-      lastDeployed: "5 minutes ago",
-      visitors: 892,
-      size: "8.1 MB"
-    },
-    {
-      id: "3",
-      name: "SaaS Dashboard",
-      domain: "saas-ghi789.pipeline.app",
-      customDomain: "dashboard.myapp.io",
-      status: "active",
-      lastDeployed: "1 day ago",
-      visitors: 5201,
-      size: "24.7 MB"
-    },
-    {
-      id: "4",
-      name: "Blog Platform",
-      domain: "blog-jkl012.pipeline.app",
-      status: "inactive",
-      lastDeployed: "3 days ago",
-      visitors: 123,
-      size: "5.2 MB"
-    }
-  ]);
+  const [sites, setSites] = useState<Site[]>([]);
+
+  useEffect(() => {
+    getSites().then(setSites);
+  }, []);
 
   const [showAddDomain, setShowAddDomain] = useState<string | null>(null);
   const [newDomain, setNewDomain] = useState("");
@@ -90,7 +57,8 @@ const Sites = () => {
     toast.success("Custom domain added successfully!");
   };
 
-  const deleteSite = (siteId: string) => {
+  const handleDeleteSite = async (siteId: string) => {
+    await deleteSite(siteId);
     setSites(sites.filter(site => site.id !== siteId));
     toast.success("Site deleted successfully!");
   };
@@ -227,10 +195,10 @@ const Sites = () => {
                     <Button variant="ghost" size="sm">
                       <Edit className="h-4 w-4" />
                     </Button>
-                    <Button 
-                      variant="ghost" 
+                    <Button
+                      variant="ghost"
                       size="sm"
-                      onClick={() => deleteSite(site.id)}
+                      onClick={() => handleDeleteSite(site.id)}
                       className="text-red-600 hover:text-red-700"
                     >
                       <Trash2 className="h-4 w-4" />
