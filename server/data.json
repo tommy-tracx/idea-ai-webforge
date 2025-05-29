@@ -1,0 +1,98 @@
+{
+  "projects": [
+    {
+      "id": "1",
+      "name": "E-commerce Store",
+      "status": "deployed",
+      "url": "store.example.com",
+      "lastUpdated": "2024-06-01T10:00:00Z",
+      "agents": ["Frontend", "Backend", "Database"]
+    },
+    {
+      "id": "2",
+      "name": "Portfolio Website",
+      "status": "building",
+      "url": "portfolio.staging.com",
+      "lastUpdated": "2024-06-01T11:00:00Z",
+      "agents": ["Design", "Frontend"]
+    },
+    {
+      "id": "3",
+      "name": "SaaS Dashboard",
+      "status": "planning",
+      "url": "Not deployed",
+      "lastUpdated": "2024-05-30T09:00:00Z",
+      "agents": ["Backend", "DevOps"]
+    }
+  ],
+  "sites": [
+    {
+      "id": "1",
+      "name": "E-commerce Store",
+      "domain": "store-abc123.pipeline.app",
+      "customDomain": "mystore.com",
+      "status": "active",
+      "lastDeployed": "2 hours ago",
+      "visitors": 2543,
+      "size": "12.4 MB"
+    },
+    {
+      "id": "2",
+      "name": "Portfolio Website",
+      "domain": "portfolio-def456.pipeline.app",
+      "status": "building",
+      "lastDeployed": "5 minutes ago",
+      "visitors": 892,
+      "size": "8.1 MB"
+    },
+    {
+      "id": "3",
+      "name": "SaaS Dashboard",
+      "domain": "saas-ghi789.pipeline.app",
+      "customDomain": "dashboard.myapp.io",
+      "status": "active",
+      "lastDeployed": "1 day ago",
+      "visitors": 5201,
+      "size": "24.7 MB"
+    },
+    {
+      "id": "4",
+      "name": "Blog Platform",
+      "domain": "blog-jkl012.pipeline.app",
+      "status": "inactive",
+      "lastDeployed": "3 days ago",
+      "visitors": 123,
+      "size": "5.2 MB"
+    }
+  ],
+  "tables": [
+    {
+      "id": "1",
+      "name": "users",
+      "records": 1250,
+      "lastModified": "2 hours ago",
+      "status": "active"
+    },
+    {
+      "id": "2",
+      "name": "projects",
+      "records": 89,
+      "lastModified": "1 day ago",
+      "status": "active"
+    },
+    {
+      "id": "3",
+      "name": "deployments",
+      "records": 342,
+      "lastModified": "3 hours ago",
+      "status": "active"
+    },
+    {
+      "id": "4",
+      "name": "analytics",
+      "records": 5670,
+      "lastModified": "5 minutes ago",
+      "status": "active"
+    }
+  ]
+}

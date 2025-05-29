@@ -36,6 +36,14 @@ npm i
 npm run dev
 ```
 
+### Running the API server
+
+A lightweight Node server powers the demo API used by the UI. Start it in another terminal:
+
+```sh
+npm run server
+```
+
 **Edit a file directly in GitHub**
 
 - Navigate to the desired file(s).

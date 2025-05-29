@@ -1,38 +1,19 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, Globe, Database, Settings, MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { getProjects } from "../services/api";
+import { Project } from "../types/app";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [projects] = useState([
-    {
-      id: 1,
-      name: "E-commerce Store",
-      status: "deployed",
-      url: "store.example.com",
-      lastUpdated: "2 hours ago",
-      agents: ["Frontend", "Backend", "Database"]
-    },
-    {
-      id: 2,
-      name: "Portfolio Website",
-      status: "building",
-      url: "portfolio.staging.com",
-      lastUpdated: "5 minutes ago",
-      agents: ["Design", "Frontend"]
-    },
-    {
-      id: 3,
-      name: "SaaS Dashboard",
-      status: "planning",
-      url: "Not deployed",
-      lastUpdated: "1 day ago",
-      agents: ["Backend", "DevOps"]
-    }
-  ]);
+  const [projects, setProjects] = useState<Project[]>([]);
+
+  useEffect(() => {
+    getProjects().then(setProjects);
+  }, []);
 
   const getStatusColor = (status: string) => {
     switch (status) {
