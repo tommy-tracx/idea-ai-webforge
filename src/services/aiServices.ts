@@ -70,16 +70,11 @@ export async function callAIService(
     });
   }
 
+  // Handle non-OpenAI services
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
+    'api-key': service.apiKey
   };
-
-  // Set authorization header based on service type
-  if (service.type === 'openai') {
-    headers['Authorization'] = `Bearer ${service.apiKey}`;
-  } else {
-    headers['api-key'] = service.apiKey;
-  }
 
   const requestBody = {
     messages,
