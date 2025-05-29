@@ -24,6 +24,7 @@ const Navigation = () => {
     { icon: Globe, label: "Sites", path: "/sites" },
     { icon: Database, label: "Database", path: "/database" },
     { icon: Settings, label: "Settings", path: "/settings" },
+    { icon: MessageSquare, label: "Support", path: "/support" },
   ];
 
   const isActive = (path: string) => location.pathname === path;
