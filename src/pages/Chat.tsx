@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Send, Bot, User, ArrowLeft, Zap, Code, Palette, Server, Database, Globe } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import AIServiceSelector from "../components/AIServiceSelector";
+import { callAIService, ChatMessage } from "../services/aiServices";
 
 interface Message {
   id: string;
@@ -13,6 +15,7 @@ interface Message {
   sender: "user" | "agent";
   agentType?: string;
   timestamp: Date;
+  serviceUsed?: string;
 }
 
 interface Agent {
@@ -22,6 +25,7 @@ interface Agent {
   color: string;
   specialty: string;
   status: "active" | "thinking" | "idle";
+  aiService?: string;
 }
 
 const Chat = () => {
@@ -37,6 +41,7 @@ const Chat = () => {
   ]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [selectedServices, setSelectedServices] = useState<string[]>(["OpenAI GPT"]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const agents: Agent[] = [
@@ -46,7 +51,8 @@ const Chat = () => {
       icon: Code,
       color: "bg-blue-500",
       specialty: "React, UI/UX, Responsive Design",
-      status: "idle"
+      status: "idle",
+      aiService: "OpenAI GPT"
     },
     {
       id: "backend",
@@ -54,7 +60,8 @@ const Chat = () => {
       icon: Server,
       color: "bg-green-500",
       specialty: "APIs, Authentication, Business Logic",
-      status: "idle"
+      status: "idle",
+      aiService: "Grok-3 (Azure)"
     },
     {
       id: "design",
@@ -62,7 +69,8 @@ const Chat = () => {
       icon: Palette,
       color: "bg-purple-500",
       specialty: "Visual Design, Branding, Typography",
-      status: "idle"
+      status: "idle",
+      aiService: "DeepSeek (Azure)"
     },
     {
       id: "database",
@@ -70,7 +78,8 @@ const Chat = () => {
       icon: Database,
       color: "bg-orange-500",
       specialty: "Data Architecture, Optimization",
-      status: "idle"
+      status: "idle",
+      aiService: "OpenAI GPT"
     },
     {
       id: "devops",
@@ -78,7 +87,8 @@ const Chat = () => {
       icon: Globe,
       color: "bg-red-500",
       specialty: "Deployment, Scaling, Monitoring",
-      status: "idle"
+      status: "idle",
+      aiService: "Grok-3 (Azure)"
     },
     {
       id: "coordinator",
@@ -86,7 +96,8 @@ const Chat = () => {
       icon: Zap,
       color: "bg-yellow-500",
       specialty: "Project Management, Agent Coordination",
-      status: "active"
+      status: "active",
+      aiService: "OpenAI GPT"
     }
   ];
 
@@ -97,6 +108,14 @@ const Chat = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  const handleServiceToggle = (serviceName: string) => {
+    setSelectedServices(prev => 
+      prev.includes(serviceName)
+        ? prev.filter(s => s !== serviceName)
+        : [...prev, serviceName]
+    );
+  };
 
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
@@ -112,18 +131,44 @@ const Chat = () => {
     setInputValue("");
     setIsTyping(true);
 
-    // Simulate AI response
-    setTimeout(() => {
+    try {
+      // Use coordinator agent with OpenAI service
+      const chatMessages: ChatMessage[] = [
+        {
+          role: "system",
+          content: "You are an AI Development Pipeline Coordinator. Help users create web applications by breaking down their requests into actionable tasks for specialized development agents. Be helpful, technical, and provide clear guidance."
+        },
+        {
+          role: "user",
+          content: inputValue
+        }
+      ];
+
+      const response = await callAIService("openai", chatMessages);
+
       const agentResponse: Message = {
         id: (Date.now() + 1).toString(),
-        content: `Great idea! I'm analyzing your request and coordinating with the development agents. The Frontend Agent will handle the user interface, the Backend Agent will create the server logic, and the DevOps Agent will prepare the deployment infrastructure. Let me break this down into actionable tasks...`,
+        content: response,
+        sender: "agent",
+        agentType: "coordinator",
+        timestamp: new Date(),
+        serviceUsed: "OpenAI GPT"
+      };
+
+      setMessages(prev => [...prev, agentResponse]);
+    } catch (error) {
+      console.error("Error calling AI service:", error);
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: "I apologize, but I'm having trouble connecting to the AI service right now. Please try again in a moment.",
         sender: "agent",
         agentType: "coordinator",
         timestamp: new Date()
       };
-      setMessages(prev => [...prev, agentResponse]);
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
       setIsTyping(false);
-    }, 2000);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -160,7 +205,14 @@ const Chat = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Agents Panel */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 space-y-6">
+            {/* AI Services */}
+            <AIServiceSelector 
+              selectedServices={selectedServices}
+              onServiceToggle={handleServiceToggle}
+            />
+
+            {/* Agents */}
             <Card className="border-0 shadow-lg bg-white/70 backdrop-blur">
               <CardHeader>
                 <CardTitle className="text-lg">AI Agents</CardTitle>
@@ -184,6 +236,7 @@ const Chat = () => {
                           </Badge>
                         </div>
                         <p className="text-xs text-slate-600 mt-1">{agent.specialty}</p>
+                        <p className="text-xs text-blue-600 mt-1">Using: {agent.aiService}</p>
                       </div>
                     </div>
                   );
@@ -223,9 +276,16 @@ const Chat = () => {
                           }`}
                         >
                           {message.sender === "agent" && (
-                            <p className="font-medium text-xs text-slate-600 mb-1">
-                              {agent?.name || "AI Agent"}
-                            </p>
+                            <div className="flex items-center justify-between mb-1">
+                              <p className="font-medium text-xs text-slate-600">
+                                {agent?.name || "AI Agent"}
+                              </p>
+                              {message.serviceUsed && (
+                                <Badge variant="outline" className="text-xs">
+                                  {message.serviceUsed}
+                                </Badge>
+                              )}
+                            </div>
                           )}
                           <p className="text-sm leading-relaxed">{message.content}</p>
                           <p className={`text-xs mt-2 ${
@@ -272,7 +332,7 @@ const Chat = () => {
                   />
                   <Button 
                     onClick={handleSendMessage}
-                    disabled={!inputValue.trim() || isTyping}
+                    disabled={!inputValue.trim() || isTyping || selectedServices.length === 0}
                     className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                   >
                     <Send className="h-4 w-4" />
