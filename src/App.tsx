@@ -11,6 +11,7 @@ import Sites from "./pages/Sites";
 import Database from "./pages/Database";
 import ProjectDetail from "./pages/ProjectDetail";
 import Settings from "./pages/Settings";
+import Support from "./pages/Support";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
               <Route path="/database" element={<Database />} />
               <Route path="/project/:projectId" element={<ProjectDetail />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/support" element={<Support />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>
